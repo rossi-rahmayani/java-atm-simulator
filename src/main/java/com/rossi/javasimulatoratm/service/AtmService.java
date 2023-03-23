@@ -1,6 +1,5 @@
 package com.rossi.javasimulatoratm.service;
 
-import com.rossi.javasimulatoratm.common.BankAccount;
 import com.rossi.javasimulatoratm.common.WithdrawalAmount;
 import com.rossi.javasimulatoratm.model.Account;
 
@@ -12,9 +11,8 @@ import java.util.Scanner;
 public class AtmService {
     ValidationService validationService = new ValidationService();
     WithdrawService withdrawService = new WithdrawService();
-
-    List<Account> accounts = BankAccount.getBankAccount();
-    static Scanner input = new Scanner(System.in);
+    List<Account> accounts = Account.getSampleAccounts();
+    Scanner input = new Scanner(System.in);
     public void welcomeScreen(){
         // input acc num
         System.out.print("Enter Account Number: ");
@@ -46,7 +44,7 @@ public class AtmService {
                 "3. Exit"
         );
         System.out.print("Please choose option [3]: ");
-        String option = input.nextLine();
+        String option = input.next();
         switch (option) {
             case "1":
                 withdrawScreen(account);
@@ -67,27 +65,34 @@ public class AtmService {
                         "3. $100\n" +
                         "4. Other\n" +
                         "5. Back");
-        System.out.println("Please choose option[5]: ");
-        String option = input.nextLine();
+        System.out.print("Please choose option[5]: ");
+        String option = input.next();
         BigInteger wa = BigInteger.ZERO;
 
         switch (option){
             case "1","2","3":
                 wa = WithdrawalAmount.findByCode(option).map(WithdrawalAmount::getAmount).orElse(BigInteger.ZERO);
-            case "4":
-                System.out.println("Other Withdraw");
-                System.out.println("Enter amount to withdraw: ");
-                String amount = input.nextLine();
-                if (validationService.validateWithdrawalAmount(amount)){
-                    wa = new BigInteger(amount);
+                if (withdrawService.withdraw(account, wa)){
+                    summaryOption(account);
                 }
                 else {
+                    withdrawScreen(account);
+                }
+            case "4":
+                System.out.println("Other Withdraw");
+                System.out.print("Enter amount to withdraw: ");
+                String amount = input.next();
+                if (validationService.validateWithdrawalAmount(amount)){
+                    wa = new BigInteger(amount);
                     if (withdrawService.withdraw(account, wa)){
                         summaryOption(account);
                     }
                     else {
                         withdrawScreen(account);
                     }
+                }
+                else {
+                    withdrawScreen(account);
                 }
             default:
                 transactionScreen(account);
@@ -99,8 +104,8 @@ public class AtmService {
         System.out.println(
                 "1. Transaction \n" +
                 "2. Exit");
-        System.out.println("Choose option[2]:");
-        String option = input.nextLine();
+        System.out.print("Choose option[2]: ");
+        String option = input.next();
 
         if (option.equals("1")){
             transactionScreen(account);

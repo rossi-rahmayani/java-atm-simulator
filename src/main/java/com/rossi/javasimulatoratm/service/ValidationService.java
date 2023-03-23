@@ -58,7 +58,7 @@ public class ValidationService {
                 .map(BigInteger::new)
                 .filter(a -> (a.remainder(BigInteger.TEN)).compareTo(BigInteger.ZERO) == 0)
                 .map(a -> {
-                    return Optional.of(a).filter(amt -> amt.compareTo(BigInteger.valueOf(1000)) > 0)
+                    return Optional.of(a).filter(amt -> amt.compareTo(BigInteger.valueOf(1000)) < 0)
                             .map(x -> Boolean.TRUE)
                             .orElseGet(() -> {
                                 System.out.println(MAX_AMOUNT_WITHDRAW_ERROR);
