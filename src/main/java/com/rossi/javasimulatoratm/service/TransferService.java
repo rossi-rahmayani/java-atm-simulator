@@ -40,5 +40,6 @@ public class TransferService {
         System.out.println("Transfer Amount     : $" + request.getAmount());
         System.out.println("Reference Number    : " + request.getReferenceNumber());
         System.out.println("Balance             : $" + fromAccount.getBalance().toString());
+        System.out.println();
     }
 }

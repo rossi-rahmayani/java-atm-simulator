@@ -23,6 +23,7 @@ public class WithdrawService {
             System.out.println("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")));
             System.out.println("Withdraw: $" + amount);
             System.out.println("Balance: $" + account.getBalance());
+            System.out.println();
             return Boolean.TRUE;
         }
     }
