@@ -1,12 +1,10 @@
 package com.rossi.javasimulatoratm.model;
 
-import java.math.BigInteger;
-
-public class TransferDto {
+public class TransferRequest {
     private Account fromAccount;
     private String toAccountNumber;
-    private BigInteger amount;
-    private String refrenceNumber;
+    private String amount;
+    private String referenceNumber;
 
     public Account getFromAccount() {
         return fromAccount;
@@ -24,19 +22,19 @@ public class TransferDto {
         this.toAccountNumber = toAccountNumber;
     }
 
-    public BigInteger getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(BigInteger amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    public String getRefrenceNumber() {
-        return refrenceNumber;
+    public String getReferenceNumber() {
+        return referenceNumber;
     }
 
-    public void setRefrenceNumber(String refrenceNumber) {
-        this.refrenceNumber = refrenceNumber;
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
     }
 }

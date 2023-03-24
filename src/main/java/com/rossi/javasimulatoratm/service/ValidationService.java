@@ -12,7 +12,8 @@ import static com.rossi.javasimulatoratm.common.MessageConstant.*;
 
 public class ValidationService {
 
-    Pattern p = Pattern.compile(DIGIT_REGEX);
+    String regex = "[0-9]+";
+    Pattern p = Pattern.compile(regex);
     public Boolean validateAccNum(String accNum){
         return validateNumber(accNum, "Account Number");
     }
@@ -20,14 +21,16 @@ public class ValidationService {
         return validateNumber(pin, "PIN");
     }
 
-    private final Predicate<String> validateDigit = s -> p.matcher(s).matches();
+    private Boolean validateDigit(String s){
+        return p.matcher(s).matches();
+    }
 
     private Boolean validateNumber(String number, String type){
         return Optional.ofNullable(number)
                 .filter(num -> num.length() >= 6)
                 .map(acc -> {
                     return Optional.of(acc)
-                            .filter(validateDigit)
+                            .filter(ac -> validateDigit(ac).equals(Boolean.TRUE))
                             .map(a -> Boolean.TRUE)
                             .orElseGet(() -> {
                                 System.out.println(NUMBERS_ONLY_ERROR);
@@ -54,7 +57,7 @@ public class ValidationService {
 
     public Boolean validateWithdrawalAmount(String amount){
         return Optional.ofNullable(amount)
-                .filter(validateDigit)
+                .filter(amt -> validateDigit(amt).equals(Boolean.TRUE))
                 .map(BigInteger::new)
                 .filter(a -> (a.remainder(BigInteger.TEN)).compareTo(BigInteger.ZERO) == 0)
                 .map(a -> {
@@ -69,6 +72,40 @@ public class ValidationService {
                     System.out.println(INVALID_AMOUNT);
                     return Boolean.FALSE;
                 });
+    }
+
+    public Account validateDestinationAccount(List<Account> accounts, String fromAccount, String toAccount){
+        if (!validateDigit(toAccount)){
+            System.out.println(INVALID_ACCOUNT_DEST);
+            return null;
+        }
+
+        return accounts.stream()
+                .filter(ac -> !ac.getAccountNumber().equals(fromAccount))
+                .filter(a -> a.getAccountNumber().equals(toAccount))
+                .findFirst()
+                .orElseGet(() -> {
+                    System.out.println(INVALID_ACCOUNT_DEST);
+                    return null;
+                });
+    }
+
+    public Boolean validateTransferAmount(String amount){
+        if (!validateDigit(amount)){
+            System.out.println(INVALID_AMOUNT);
+            return Boolean.FALSE;
+        }
+        BigInteger transfAmount = new BigInteger(amount);
+
+        if (transfAmount.compareTo(BigInteger.ONE) < 0){
+            System.out.println(MIN_AMOUNT_TRANSFER_ERROR);
+            return Boolean.FALSE;
+        }
+        if (transfAmount.compareTo(BigInteger.valueOf(1000)) > 0){
+            System.out.println(MAX_AMOUNT_TRANSFER_ERROR);
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
     }
 
 }

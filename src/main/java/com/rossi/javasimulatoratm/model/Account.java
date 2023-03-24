@@ -52,7 +52,6 @@ public class Account {
         this.balance = balance;
     }
 
-
     public static List<Account> getSampleAccounts(){
         Account account1 = new Account("112233", "012108", "John Doe", BigInteger.valueOf(100));
         Account account2 = new Account("112244", "932012", "Jane Doe", BigInteger.valueOf(30));
