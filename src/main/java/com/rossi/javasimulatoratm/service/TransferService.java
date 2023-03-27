@@ -1,11 +1,10 @@
 package com.rossi.javasimulatoratm.service;
 
+import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
 import com.rossi.javasimulatoratm.model.TransferRequest;
 import java.math.BigInteger;
 import java.util.List;
-
-import static com.rossi.javasimulatoratm.common.MessageConstant.INSUFFICIENT_BALANCE;
 
 public class TransferService extends AtmService{
 
@@ -17,7 +16,6 @@ public class TransferService extends AtmService{
         //input dest account
         System.out.print("Please enter destination account and press enter to continue " +
                 "or press cancel (Esc) to go back to Transaction: ");
-
         request.setToAccountNumber(input.nextLine());
 
         System.out.print("Please enter transfer amount and press enter to continue " +
@@ -43,41 +41,29 @@ public class TransferService extends AtmService{
                 "Choose option[2]: "
         );
         String option = input.nextLine();
-        switch (option) {
-            case "1":
-                if (transfer(accounts, request)) {
-                    summaryOption(account);
-                } else {
+        try {
+            switch (option) {
+                case "1":
+                    transfer(accounts, request);
+                    break;
+                default:
                     transactionScreen(account);
-                }
-                break;
-            default:
-                transactionScreen(account);
-                break;
+                    break;
+            }
+        }
+        catch (ValidationException e){
+            System.out.println(e.getMessage());
+            transferScreen(account);
         }
     }
-    public Boolean transfer(List<Account> accounts, TransferRequest request){
+    public void transfer(List<Account> accounts, TransferRequest request) throws ValidationException{
         Account fromAccount = request.getFromAccount();
         Account toAccount = validationService.validateDestinationAccount(accounts, fromAccount.getAccountNumber(), request.getToAccountNumber());
-        BigInteger trfAmount;
-        if (toAccount == null){
-            return Boolean.FALSE;
-        }
-        if (!validationService.validateTransferAmount(request.getAmount())){
-            return Boolean.FALSE;
-        }
-        trfAmount = new BigInteger(request.getAmount());
-
-        if (trfAmount.compareTo(fromAccount.getBalance()) > 0){
-            System.out.println(INSUFFICIENT_BALANCE + trfAmount.toString());
-            return Boolean.FALSE;
-        }
-
+        BigInteger trfAmount = validationService.validateTransferAmount(request.getAmount());
+        validationService.validateBalance(fromAccount, trfAmount);
         fromAccount.setBalance(fromAccount.getBalance().subtract(trfAmount));
         toAccount.setBalance(toAccount.getBalance().add(trfAmount));
-
         summaryTransfer(request, fromAccount);
-        return Boolean.TRUE;
     }
 
     private void summaryTransfer(TransferRequest request, Account fromAccount){
@@ -87,5 +73,6 @@ public class TransferService extends AtmService{
         System.out.println("Reference Number    : " + request.getReferenceNumber());
         System.out.println("Balance             : $" + fromAccount.getBalance().toString());
         System.out.println();
+        summaryOption(fromAccount);
     }
 }

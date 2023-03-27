@@ -56,36 +56,32 @@ public class ValidationService {
         return new BigInteger(amount);
     }
 
-    public Account validateDestinationAccount(List<Account> accounts, String fromAccount, String toAccount){
+    public Account validateDestinationAccount(List<Account> accounts, String fromAccount, String toAccount) throws ValidationException{
         if (!validateDigit(toAccount)){
-            System.out.println(INVALID_ACCOUNT_DEST);
-            return null;
+            throw new ValidationException(INVALID_ACCOUNT_DEST);
         }
         for (Account a : accounts){
             if (a.getAccountNumber().equals(toAccount) && !a.getAccountNumber().equals(fromAccount)){
                 return a;
             }
         }
-        System.out.println(INVALID_ACCOUNT_DEST);
-        return null;
+        throw new ValidationException(INVALID_ACCOUNT_DEST);
     }
 
-    public Boolean validateTransferAmount(String amount){
+    public BigInteger validateTransferAmount(String amount) throws ValidationException{
         if (!validateDigit(amount)){
-            System.out.println(INVALID_AMOUNT);
-            return Boolean.FALSE;
+            throw new ValidationException(INVALID_AMOUNT);
         }
-        BigInteger transfAmount = new BigInteger(amount);
+        BigInteger transferAmount = new BigInteger(amount);
 
-        if (transfAmount.compareTo(BigInteger.ONE) < 0){
-            System.out.println(MIN_AMOUNT_TRANSFER_ERROR);
-            return Boolean.FALSE;
+        if (transferAmount.compareTo(BigInteger.ONE) < 0){
+            throw new ValidationException(MIN_AMOUNT_TRANSFER_ERROR);
         }
-        if (transfAmount.compareTo(BigInteger.valueOf(1000)) > 0){
-            System.out.println(MAX_AMOUNT_TRANSFER_ERROR);
-            return Boolean.FALSE;
+        if (transferAmount.compareTo(BigInteger.valueOf(1000)) > 0){
+            throw new ValidationException(MAX_AMOUNT_TRANSFER_ERROR);
         }
-        return Boolean.TRUE;
+
+        return transferAmount;
     }
 
     public void validateBalance(Account account, BigInteger amount) throws ValidationException{
