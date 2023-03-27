@@ -1,5 +1,6 @@
 package com.rossi.javasimulatoratm.service;
 
+import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
 
 import java.math.BigInteger;
@@ -12,10 +13,10 @@ public class ValidationService {
 
     String regex = "[0-9]+";
     Pattern p = Pattern.compile(regex);
-    public Boolean validateAccNum(String accNum){
+    public Boolean validateAccNum(String accNum) throws ValidationException{
         return validateNumber(accNum, "Account Number");
     }
-    public Boolean validatePin(String pin){
+    public Boolean validatePin(String pin) throws ValidationException{
         return validateNumber(pin, "PIN");
     }
 
@@ -23,26 +24,23 @@ public class ValidationService {
         return p.matcher(s).matches();
     }
 
-    private Boolean validateNumber(String number, String type){
+    private Boolean validateNumber(String number, String type) throws ValidationException {
         if (number.isBlank() || number.length() < 6){
-            System.out.println(type + MINIMUM_DIGIT_LENGTH_ERROR);
-            return Boolean.FALSE;
+            throw new ValidationException(type + MINIMUM_DIGIT_LENGTH_ERROR);
         }
         if (!validateDigit(number)){
-            System.out.println( type + NUMBERS_ONLY_ERROR);
-            return Boolean.FALSE;
+            throw new ValidationException(type + NUMBERS_ONLY_ERROR);
         }
         return Boolean.TRUE;
     }
 
-    public Account validateAccountLogin(List<Account> accounts, String accNum, String pin){
+    public Account validateAccountLogin(List<Account> accounts, String accNum, String pin) throws ValidationException{
         for (Account a: accounts){
             if (a.getAccountNumber().equals(accNum) && (a.getPin().equals(pin))){
                 return a;
             }
         }
-        System.out.println(INVALID_ACCOUNT_OR_PIN);
-        return null;
+        throw new ValidationException(INVALID_ACCOUNT_OR_PIN);
     }
 
     public Boolean validateWithdrawalAmount(String amount){

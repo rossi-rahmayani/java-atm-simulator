@@ -17,7 +17,7 @@ public class TransferService extends AtmService{
         //input dest account
         System.out.print("Please enter destination account and press enter to continue " +
                 "or press cancel (Esc) to go back to Transaction: ");
-        
+
         request.setToAccountNumber(input.nextLine());
 
         System.out.print("Please enter transfer amount and press enter to continue " +

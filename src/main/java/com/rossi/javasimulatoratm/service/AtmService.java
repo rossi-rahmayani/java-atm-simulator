@@ -1,5 +1,6 @@
 package com.rossi.javasimulatoratm.service;
 
+import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
 import java.util.List;
 import java.util.Optional;
@@ -12,24 +13,23 @@ public class AtmService{
     Scanner input = new Scanner(System.in);
     Random random = new Random();
     public void welcomeScreen(){
-        // input acc num
-        System.out.print("Enter Account Number: ");
-        String accountNumber = input.nextLine();
+        try {
+            // input acc num
+            System.out.print("Enter Account Number: ");
+            String accountNumber = input.nextLine();
+            validationService.validateAccNum(accountNumber);
 
-        if (validationService.validateAccNum(accountNumber)) {
             // input pin
             System.out.print("Enter PIN: ");
             String pin = input.nextLine();
-            if (validationService.validatePin(pin)) {
-                //validate account
-                Optional.ofNullable(validationService.validateAccountLogin(accounts, accountNumber, pin))
-                        .ifPresentOrElse(this::transactionScreen, this::welcomeScreen);
-            }
-            else {
-                welcomeScreen();
-            }
+            validationService.validatePin(pin);
+
+            //validate account
+            Account account = validationService.validateAccountLogin(accounts, accountNumber, pin);
+            transactionScreen(account);
         }
-        else {
+        catch (ValidationException e){
+            System.out.println(e.getMessage());
             welcomeScreen();
         }
     }
@@ -59,9 +59,6 @@ public class AtmService{
                 transactionScreen(account);
         }
     }
-
-
-
 
     protected void summaryOption(Account account){
         System.out.println(
