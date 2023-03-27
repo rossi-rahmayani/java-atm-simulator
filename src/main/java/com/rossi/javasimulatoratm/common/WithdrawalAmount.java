@@ -26,9 +26,12 @@ public enum WithdrawalAmount {
         this.amount = amount;
     }
 
-    public static Optional<WithdrawalAmount> findByCode(String code){
-        return Arrays.stream(WithdrawalAmount.values())
-                .filter(wa -> wa.code.equals(code))
-                .findFirst();
+    public static WithdrawalAmount findByCode(String code){
+        for (WithdrawalAmount wa: WithdrawalAmount.values()){
+            if (wa.code.equals(code)){
+                return wa;
+            }
+        }
+        return null;
     }
 }
