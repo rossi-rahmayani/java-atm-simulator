@@ -1,14 +1,11 @@
 package com.rossi.javasimulatoratm.common;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Optional;
 
 public enum WithdrawalAmount {
     TEN("1", BigInteger.valueOf(10)),
     FIFTY("2", BigInteger.valueOf(50)),
     ONE_HUNDRED("3", BigInteger.valueOf(100));
-
 
     public String getCode() {
         return code;
