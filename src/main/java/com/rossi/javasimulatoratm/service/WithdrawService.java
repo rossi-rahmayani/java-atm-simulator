@@ -14,10 +14,10 @@ import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class WithdrawService {
     private ValidationService validationService = new ValidationService();
-    private AtmService atmService = new AtmService();
+    private SummaryService summaryService = new SummaryService();
     Scanner input = new Scanner(System.in);
 
-    public void withdrawScreen(Account account) {
+    public String withdrawScreen(Account account) {
         System.out.println(
                 "1. $10\n" +
                 "2. $50\n" +
@@ -32,34 +32,30 @@ public class WithdrawService {
             switch (option) {
                 case WITHDRAW_TEN, WITHDRAW_FIFTY, WITHDRAW_HUNDRED:
                     withdrawalAmount = Optional.ofNullable(WithdrawalAmount.findByCode(option))
-                            .map(WithdrawalAmount::getAmount)
-                            .orElseGet(() -> BigInteger.ZERO);
-                    withdraw(account, withdrawalAmount);
-                    break;
+                            .map(WithdrawalAmount::getAmount).orElseGet(() -> BigInteger.ZERO);
+                    return withdraw(account, withdrawalAmount);
                 case WITHDRAW_CUSTOM:
                     System.out.println("Other Withdraw");
                     System.out.print("Enter amount to withdraw: ");
                     String amount = input.nextLine();
                     withdrawalAmount = validationService.validateWithdrawalAmount(amount);
-                    withdraw(account, withdrawalAmount);
-                    break;
+                    return withdraw(account, withdrawalAmount);
                 default:
-                    atmService.transactionScreen(account);
+                    return MAIN_TRANSACTION_MENU;
             }
         }
         catch (ValidationException e){
             System.out.println(e.getMessage());
-            withdrawScreen(account);
+            return withdrawScreen(account);
         }
     }
 
-    private void withdraw(Account account, BigInteger amount) throws ValidationException {
+    private String withdraw(Account account, BigInteger amount) throws ValidationException {
         account.decreaseBalance(amount);
         System.out.println("Summary");
         System.out.println("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")));
         System.out.println("Withdraw: $" + amount);
         System.out.println("Balance: $" + account.getBalance());
-        System.out.println();
-        atmService.summaryOption(account);
+        return summaryService.summaryOption();
     }
 }

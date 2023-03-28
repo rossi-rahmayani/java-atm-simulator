@@ -28,4 +28,12 @@ public class GlobalConstant {
 
     //transfer confirmation option
     public static final String CONFIRM_TRANSFER = "1";
+    public static final String CANCEL_TRANSFER = "2";
+
+    //redirect option menu
+    public static final String WITHDRAWAL_MENU = "WITHDRAWAL";
+    public static final String TRANSFER_MENU = "TRANSFER";
+    public static final String MAIN_TRANSACTION_MENU = "MAIN";
+    public static final String WELCOME = "WELCOME";
+
 }

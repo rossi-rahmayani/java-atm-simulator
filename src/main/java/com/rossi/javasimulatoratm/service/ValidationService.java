@@ -8,8 +8,7 @@ import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class ValidationService {
 
-    String regex = "[0-9]+";
-    Pattern p = Pattern.compile(regex);
+    Pattern p = Pattern.compile(DIGIT_REGEX);
     public void validateAccNum(String accNum) throws ValidationException{
         validateNumber(accNum, "Account Number");
     }

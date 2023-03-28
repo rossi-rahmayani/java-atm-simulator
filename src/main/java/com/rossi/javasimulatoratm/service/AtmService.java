@@ -14,7 +14,6 @@ public class AtmService{
     private TransferService transferService = new TransferService();
     Scanner input = new Scanner(System.in);
 
-
     public void welcomeScreen(){
         try {
             // input acc num
@@ -37,7 +36,7 @@ public class AtmService{
         }
     }
 
-    protected void transactionScreen(Account account){
+    private void transactionScreen(Account account){
         System.out.println(
                 "1. Withdraw\n" +
                 "2. Fund Transfer\n" +
@@ -46,11 +45,11 @@ public class AtmService{
         System.out.print("Please choose option [3]: ");
         String option = input.nextLine();
         switch (option) {
-            case WITHDRAW_OPTION: // create constant/enum
-                withdrawService.withdrawScreen(account);
+            case WITHDRAW_OPTION:
+                redirectMenu(withdrawService.withdrawScreen(account), account);
                 break;
             case TRANSFER_FUND_OPTION:
-                transferService.transferScreen(account);
+                redirectMenu(transferService.transferScreen(account), account);
                 break;
             case EXIT_OPTION:
                 welcomeScreen();
@@ -60,18 +59,14 @@ public class AtmService{
         }
     }
 
-    protected void summaryOption(Account account){ // move to separate class
-        System.out.println(
-                "1. Transaction \n" +
-                "2. Exit");
-        System.out.print("Choose option[2]: ");
-        String option = input.nextLine();
-
-        if (option.equals("1")){
-            transactionScreen(account);
-        }
-        else {
-            welcomeScreen();
+    private void redirectMenu(String menuFlag, Account account){
+        switch (menuFlag){
+            case MAIN_TRANSACTION_MENU:
+                transactionScreen(account);
+                break;
+            case WELCOME:
+                welcomeScreen();
+                break;
         }
     }
 
