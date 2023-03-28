@@ -2,15 +2,19 @@ package com.rossi.javasimulatoratm.service;
 
 import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
-import java.util.List;
-import java.util.Random;
+import com.rossi.javasimulatoratm.repository.AccountRepository;
 import java.util.Scanner;
 
+import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
+
 public class AtmService{
-    ValidationService validationService = new ValidationService();
-    List<Account> accounts = Account.getSampleAccounts();
+    private ValidationService validationService = new ValidationService();
+    private AccountRepository accountRepository = new AccountRepository();
+    private WithdrawService withdrawService = new WithdrawService();
+    private TransferService transferService = new TransferService();
     Scanner input = new Scanner(System.in);
-    Random random = new Random();
+
+
     public void welcomeScreen(){
         try {
             // input acc num
@@ -24,7 +28,7 @@ public class AtmService{
             validationService.validatePin(pin);
 
             //validate account
-            Account account = validationService.validateAccountLogin(accounts, accountNumber, pin);
+            Account account = accountRepository.findByAccountNumberAndPin(accountNumber, pin);
             transactionScreen(account);
         }
         catch (ValidationException e){
@@ -34,9 +38,6 @@ public class AtmService{
     }
 
     protected void transactionScreen(Account account){
-        var withdrawService = new WithdrawService();
-        var transferService = new TransferService();
-
         System.out.println(
                 "1. Withdraw\n" +
                 "2. Fund Transfer\n" +
@@ -45,13 +46,13 @@ public class AtmService{
         System.out.print("Please choose option [3]: ");
         String option = input.nextLine();
         switch (option) {
-            case "1":
+            case WITHDRAW_OPTION: // create constant/enum
                 withdrawService.withdrawScreen(account);
                 break;
-            case "2":
+            case TRANSFER_FUND_OPTION:
                 transferService.transferScreen(account);
                 break;
-            case "3", "", " ":
+            case EXIT_OPTION:
                 welcomeScreen();
                 break;
             default:
@@ -59,7 +60,7 @@ public class AtmService{
         }
     }
 
-    protected void summaryOption(Account account){
+    protected void summaryOption(Account account){ // move to separate class
         System.out.println(
                 "1. Transaction \n" +
                 "2. Exit");

@@ -1,7 +1,11 @@
 package com.rossi.javasimulatoratm.model;
 
+import com.rossi.javasimulatoratm.exception.ValidationException;
+
 import java.math.BigInteger;
 import java.util.List;
+
+import static com.rossi.javasimulatoratm.common.GlobalConstant.INSUFFICIENT_BALANCE;
 
 public class Account {
     private String accountNumber;
@@ -19,37 +23,20 @@ public class Account {
         this.balance = balance;
     }
 
-
     public String getAccountNumber() {
         return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
     }
 
     public String getPin() {
         return pin;
     }
 
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public BigInteger getBalance() {
         return balance;
-    }
-
-    public void setBalance(BigInteger balance) {
-        this.balance = balance;
     }
 
     public static List<Account> getSampleAccounts(){
@@ -57,4 +44,16 @@ public class Account {
         Account account2 = new Account("112244", "932012", "Jane Doe", BigInteger.valueOf(30));
         return List.of(account1, account2);
     }
+
+    public void decreaseBalance(BigInteger amount) throws ValidationException {
+        if (amount.compareTo(this.balance) > 0){
+            throw new ValidationException(INSUFFICIENT_BALANCE + amount);
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+
+    public void increaseBalance(BigInteger amount){
+        this.balance = this.balance.add(amount);
+    }
+
 }

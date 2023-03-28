@@ -3,10 +3,23 @@ package com.rossi.javasimulatoratm.service;
 import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
 import com.rossi.javasimulatoratm.model.TransferRequest;
+import com.rossi.javasimulatoratm.repository.AccountRepository;
+
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
-public class TransferService extends AtmService{
+import static com.rossi.javasimulatoratm.common.GlobalConstant.CONFIRM_TRANSFER;
+
+public class TransferService{
+
+    private ValidationService validationService = new ValidationService();
+    private AtmService atmService = new AtmService();
+    private AccountRepository accountRepository = new AccountRepository();
+
+    Scanner input = new Scanner(System.in);
+    Random random = new Random();
 
     protected void transferScreen(Account account){
         TransferRequest request = new TransferRequest();
@@ -19,7 +32,7 @@ public class TransferService extends AtmService{
             String accNumber = input.nextLine();
 
             if (accNumber.equalsIgnoreCase("X")){
-                transactionScreen(account);
+                atmService.transactionScreen(account);
                 break;
             }
             request.setToAccountNumber(accNumber);
@@ -30,7 +43,7 @@ public class TransferService extends AtmService{
             String trfAmount = input.nextLine();
 
             if (trfAmount.equalsIgnoreCase("X")){
-                transactionScreen(account);
+                atmService.transactionScreen(account);
                 break;
             }
             request.setAmount(trfAmount);
@@ -40,8 +53,8 @@ public class TransferService extends AtmService{
                     "press enter to continue or press cancel (X) to go back to Transaction: ");
             String refStr = input.nextLine();
             
-            if(refStr.equalsIgnoreCase("X")){
-                transactionScreen(account);
+            if (refStr.equalsIgnoreCase("X")){
+                atmService.transactionScreen(account);
                 break;
             }
 
@@ -63,11 +76,11 @@ public class TransferService extends AtmService{
             String option = input.nextLine();
             try {
                 switch (option) {
-                    case "1":
-                        transfer(accounts, request);
+                    case CONFIRM_TRANSFER:
+                        transfer(request);
                         break;
                     default:
-                        transactionScreen(account);
+                        atmService.transactionScreen(account);
                         break;
                 }
             }
@@ -78,13 +91,12 @@ public class TransferService extends AtmService{
         }
     }
 
-    private void transfer(List<Account> accounts, TransferRequest request) throws ValidationException{
+    private void transfer(TransferRequest request) throws ValidationException{
         Account fromAccount = request.getFromAccount();
-        Account toAccount = validationService.validateDestinationAccount(accounts, fromAccount.getAccountNumber(), request.getToAccountNumber());
-        BigInteger trfAmount = validationService.validateTransferAmount(request.getAmount());
-        validationService.validateBalance(fromAccount, trfAmount);
-        fromAccount.setBalance(fromAccount.getBalance().subtract(trfAmount));
-        toAccount.setBalance(toAccount.getBalance().add(trfAmount));
+        Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber()); //change to repository
+        BigInteger trfAmount = validationService.validateTransferAmount(request.getAmount()); 
+        fromAccount.decreaseBalance(trfAmount);
+        toAccount.increaseBalance(trfAmount);
         summaryTransfer(request, fromAccount);
     }
 
@@ -95,6 +107,6 @@ public class TransferService extends AtmService{
         System.out.println("Reference Number    : " + request.getReferenceNumber());
         System.out.println("Balance             : $" + fromAccount.getBalance().toString());
         System.out.println();
-        summaryOption(fromAccount);
+        atmService.summaryOption(fromAccount);
     }
 }

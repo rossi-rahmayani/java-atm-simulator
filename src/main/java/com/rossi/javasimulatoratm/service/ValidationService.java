@@ -1,13 +1,10 @@
 package com.rossi.javasimulatoratm.service;
 
 import com.rossi.javasimulatoratm.exception.ValidationException;
-import com.rossi.javasimulatoratm.model.Account;
-
 import java.math.BigInteger;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.rossi.javasimulatoratm.common.MessageConstant.*;
+import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class ValidationService {
 
@@ -33,15 +30,6 @@ public class ValidationService {
         }
     }
 
-    public Account validateAccountLogin(List<Account> accounts, String accNum, String pin) throws ValidationException{
-        for (Account a: accounts){
-            if (a.getAccountNumber().equals(accNum) && (a.getPin().equals(pin))){
-                return a;
-            }
-        }
-        throw new ValidationException(INVALID_ACCOUNT_OR_PIN);
-    }
-
     public BigInteger validateWithdrawalAmount(String amount) throws ValidationException{
         if (!validateDigit(amount)){
             throw new ValidationException(INVALID_AMOUNT);
@@ -56,18 +44,6 @@ public class ValidationService {
         return new BigInteger(amount);
     }
 
-    public Account validateDestinationAccount(List<Account> accounts, String fromAccount, String toAccount) throws ValidationException{
-        if (!validateDigit(toAccount)){
-            throw new ValidationException(INVALID_ACCOUNT_DEST);
-        }
-        for (Account a : accounts){
-            if (a.getAccountNumber().equals(toAccount) && !a.getAccountNumber().equals(fromAccount)){
-                return a;
-            }
-        }
-        throw new ValidationException(INVALID_ACCOUNT_DEST);
-    }
-
     public BigInteger validateTransferAmount(String amount) throws ValidationException{
         if (!validateDigit(amount)){
             throw new ValidationException(INVALID_AMOUNT);
@@ -80,14 +56,7 @@ public class ValidationService {
         if (transferAmount.compareTo(BigInteger.valueOf(1000)) > 0){
             throw new ValidationException(MAX_AMOUNT_TRANSFER_ERROR);
         }
-
         return transferAmount;
-    }
-
-    public void validateBalance(Account account, BigInteger amount) throws ValidationException{
-        if (amount.compareTo(account.getBalance()) > 0){
-            throw new ValidationException(INSUFFICIENT_BALANCE + amount);
-        }
     }
 
 }
