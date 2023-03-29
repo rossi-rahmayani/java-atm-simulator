@@ -40,7 +40,7 @@ public class ValidationService {
         if ((amt.remainder(BigInteger.TEN)).compareTo(BigInteger.ZERO) != 0){
             throw new ValidationException(INVALID_AMOUNT);
         }
-        return new BigInteger(amount);
+        return amt;
     }
 
     public BigInteger validateTransferAmount(String amount) throws ValidationException{
