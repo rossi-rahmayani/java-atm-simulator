@@ -28,7 +28,7 @@ public enum WithdrawalAmount {
 
     public static WithdrawalAmount findByCode(String code){
         return Arrays.stream(WithdrawalAmount.values())
-                .filter(withdrawalAmount -> withdrawalAmount.code.equals(code))
+                .filter(withdrawalAmount -> withdrawalAmount.getCode().equals(code))
                 .findFirst()
                 .orElseGet(() -> null);
     }
