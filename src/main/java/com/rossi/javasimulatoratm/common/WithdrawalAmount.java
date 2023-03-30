@@ -1,11 +1,14 @@
 package com.rossi.javasimulatoratm.common;
 
 import java.math.BigInteger;
+import java.util.Arrays;
+
+import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public enum WithdrawalAmount {
-    TEN("1", BigInteger.valueOf(10)),
-    FIFTY("2", BigInteger.valueOf(50)),
-    ONE_HUNDRED("3", BigInteger.valueOf(100));
+    TEN (WITHDRAW_TEN, BigInteger.valueOf(10)),
+    FIFTY (WITHDRAW_FIFTY, BigInteger.valueOf(50)),
+    ONE_HUNDRED (WITHDRAW_HUNDRED, BigInteger.valueOf(100));
 
     public String getCode() {
         return code;
@@ -24,11 +27,9 @@ public enum WithdrawalAmount {
     }
 
     public static WithdrawalAmount findByCode(String code){
-        for (WithdrawalAmount wa: WithdrawalAmount.values()){
-            if (wa.code.equals(code)){
-                return wa;
-            }
-        }
-        return null;
+        return Arrays.stream(WithdrawalAmount.values())
+                .filter(withdrawalAmount -> withdrawalAmount.code.equals(code))
+                .findFirst()
+                .orElseGet(() -> null);
     }
 }
