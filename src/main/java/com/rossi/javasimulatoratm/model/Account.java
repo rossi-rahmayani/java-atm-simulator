@@ -22,27 +22,15 @@ public class Account {
         this.name = name;
         this.balance = balance;
     }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public BigInteger getBalance() {
         return balance;
     }
+    public Boolean isMatchesPin(String pin){
+        return this.pin.equals(pin);
+    }
 
-    public static List<Account> getSampleAccounts(){
-        Account account1 = new Account("112233", "012108", "John Doe", BigInteger.valueOf(100));
-        Account account2 = new Account("112244", "932012", "Jane Doe", BigInteger.valueOf(30));
-        return List.of(account1, account2);
+    public Boolean isMatchesAccountNumber(String accountNumber){
+        return this.accountNumber.equals(accountNumber);
     }
 
     public void decreaseBalance(BigInteger amount) throws ValidationException {

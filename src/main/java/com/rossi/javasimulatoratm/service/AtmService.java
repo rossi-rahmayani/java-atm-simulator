@@ -8,11 +8,19 @@ import java.util.Scanner;
 import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class AtmService{
-    private ValidationService validationService = new ValidationService();
-    private AccountRepository accountRepository = new AccountRepository();
-    private WithdrawService withdrawService = new WithdrawService();
-    private TransferService transferService = new TransferService();
+    private ValidationService validationService;
+    private AccountRepository accountRepository;
+    private WithdrawService withdrawService;
+    private TransferService transferService;
+
     Scanner input = new Scanner(System.in);
+
+    public AtmService(ValidationService validationService, AccountRepository accountRepository, WithdrawService withdrawService, TransferService transferService) {
+        this.validationService = validationService;
+        this.accountRepository = accountRepository;
+        this.withdrawService = withdrawService;
+        this.transferService = transferService;
+    }
 
     public void welcomeScreen(){
         try {

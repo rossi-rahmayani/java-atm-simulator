@@ -13,8 +13,13 @@ import java.util.Scanner;
 import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class WithdrawService {
-    private ValidationService validationService = new ValidationService();
-    private SummaryService summaryService = new SummaryService();
+    private ValidationService validationService;
+    private SummaryService summaryService;
+    public WithdrawService(ValidationService validationService, SummaryService summaryService) {
+        this.validationService = validationService;
+        this.summaryService = summaryService;
+    }
+
     Scanner input = new Scanner(System.in);
 
     public String withdrawScreen(Account account) {

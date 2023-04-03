@@ -12,13 +12,18 @@ import java.util.Scanner;
 import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 
 public class TransferService{
-    private ValidationService validationService = new ValidationService();
-    private AccountRepository accountRepository = new AccountRepository();
-
-    private SummaryService summaryService = new SummaryService();
+    private ValidationService validationService;
+    private AccountRepository accountRepository;
+    private SummaryService summaryService;
 
     Scanner input = new Scanner(System.in);
     Random random = new Random();
+
+    public TransferService(ValidationService validationService, AccountRepository accountRepository, SummaryService summaryService) {
+        this.validationService = validationService;
+        this.accountRepository = accountRepository;
+        this.summaryService = summaryService;
+    }
 
     protected String transferScreen(Account account){
         TransferRequest request = new TransferRequest();
@@ -93,10 +98,7 @@ public class TransferService{
     }
 
     private String summaryTransfer(TransferRequest request, Account fromAccount){
-        System.out.println("Fund Transfer Summary");
-        System.out.println("Destination Account : " + request.getToAccountNumber());
-        System.out.println("Transfer Amount     : $" + request.getAmount());
-        System.out.println("Reference Number    : " + request.getReferenceNumber());
+        System.out.println(request.showSummaryTransfer());
         System.out.println("Balance             : $" + fromAccount.getBalance().toString());
         return summaryService.summaryOption();
     }

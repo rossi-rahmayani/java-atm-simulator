@@ -37,4 +37,11 @@ public class TransferRequest {
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
+    public String showSummaryTransfer(){
+        return  "Fund Transfer Summary \n" +
+                "Destination Account : " + this.toAccountNumber + "\n" +
+                "Transfer Amount     : $" + this.amount + "\n" +
+                "Reference Number    : " + this.referenceNumber;
+    }
 }

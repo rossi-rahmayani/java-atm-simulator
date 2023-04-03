@@ -5,18 +5,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.util.List;
 
 public class AccountTest {
 
-    Account account = Account.getSampleAccounts().get(0);
-
-    @Test
-    void getBankAccounts(){
-        List<Account> accounts = Account.getSampleAccounts();
-        Assertions.assertEquals(2, accounts.size());
-        Assertions.assertTrue(accounts.stream().anyMatch(account -> account.getAccountNumber().equals("112233")));
-    }
+    Account account = new Account("112233", "012108", "John Doe", BigInteger.valueOf(100));
 
     @Test
     void decreaseBalance_success() throws ValidationException {
