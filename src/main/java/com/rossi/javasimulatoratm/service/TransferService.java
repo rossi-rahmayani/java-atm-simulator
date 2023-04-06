@@ -1,11 +1,15 @@
 package com.rossi.javasimulatoratm.service;
 
+import com.rossi.javasimulatoratm.common.TransactionCode;
 import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
 import com.rossi.javasimulatoratm.model.TransferRequest;
 import com.rossi.javasimulatoratm.repository.AccountRepository;
+import com.rossi.javasimulatoratm.repository.TransactionRepository;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -15,14 +19,16 @@ public class TransferService{
     private ValidationService validationService;
     private AccountRepository accountRepository;
     private SummaryService summaryService;
+    private TransactionRepository transactionRepository;
 
     Scanner input = new Scanner(System.in);
     Random random = new Random();
 
-    public TransferService(ValidationService validationService, AccountRepository accountRepository, SummaryService summaryService) {
+    public TransferService(ValidationService validationService, AccountRepository accountRepository, SummaryService summaryService, TransactionRepository transactionRepository) {
         this.validationService = validationService;
         this.accountRepository = accountRepository;
         this.summaryService = summaryService;
+        this.transactionRepository = transactionRepository;
     }
 
     protected String transferScreen(Account account){
@@ -85,7 +91,6 @@ public class TransferService{
             System.out.println(e.getMessage());
             return transferScreen(account);
         }
-
     }
 
     private String transfer(TransferRequest request) throws ValidationException{
@@ -94,7 +99,14 @@ public class TransferService{
         BigInteger trfAmount = validationService.validateTransferAmount(request.getAmount()); 
         fromAccount.decreaseBalance(trfAmount);
         toAccount.increaseBalance(trfAmount);
+        saveTransaction(fromAccount, toAccount, request.getReferenceNumber(), trfAmount);
         return summaryTransfer(request, fromAccount);
+    }
+
+    private void saveTransaction(Account fromAccount, Account toAccount, String refNumber, BigInteger amount){
+        LocalDateTime trxDate = LocalDateTime.now();
+        transactionRepository.createNewTransaction(fromAccount, TransactionCode.TRANSFER, amount, trxDate, refNumber);
+        transactionRepository.createNewTransaction(toAccount, TransactionCode.FUND, amount, trxDate, refNumber);
     }
 
     private String summaryTransfer(TransferRequest request, Account fromAccount){

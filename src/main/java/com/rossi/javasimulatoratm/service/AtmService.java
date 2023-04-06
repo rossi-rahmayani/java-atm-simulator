@@ -12,14 +12,16 @@ public class AtmService{
     private AccountRepository accountRepository;
     private WithdrawService withdrawService;
     private TransferService transferService;
+    private InquiryService inquiryService;
 
     Scanner input = new Scanner(System.in);
 
-    public AtmService(ValidationService validationService, AccountRepository accountRepository, WithdrawService withdrawService, TransferService transferService) {
+    public AtmService(ValidationService validationService, AccountRepository accountRepository, WithdrawService withdrawService, TransferService transferService, InquiryService inquiryService) {
         this.validationService = validationService;
         this.accountRepository = accountRepository;
         this.withdrawService = withdrawService;
         this.transferService = transferService;
+        this.inquiryService = inquiryService;
     }
 
     public void welcomeScreen(){
@@ -48,9 +50,10 @@ public class AtmService{
         System.out.println(
                 "1. Withdraw\n" +
                 "2. Fund Transfer\n" +
-                "3. Exit"
+                "3. Show Mutation\n" +
+                "9. Exit"
         );
-        System.out.print("Please choose option [3]: ");
+        System.out.print("Please choose option [9]: ");
         String option = input.nextLine();
         switch (option) {
             case WITHDRAW_OPTION:
@@ -59,10 +62,14 @@ public class AtmService{
             case TRANSFER_FUND_OPTION:
                 redirectMenu(transferService.transferScreen(account), account);
                 break;
+            case MUTATION_INQUIRY:
+                redirectMenu(inquiryService.showLatestMutation(account), account);
+                break;
             case EXIT_OPTION:
                 welcomeScreen();
                 break;
             default:
+                System.out.println("Incorrect option: " + option + "Please try again!!");
                 transactionScreen(account);
         }
     }

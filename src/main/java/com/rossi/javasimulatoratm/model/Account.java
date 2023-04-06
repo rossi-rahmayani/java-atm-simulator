@@ -3,8 +3,6 @@ package com.rossi.javasimulatoratm.model;
 import com.rossi.javasimulatoratm.exception.ValidationException;
 
 import java.math.BigInteger;
-import java.util.List;
-
 import static com.rossi.javasimulatoratm.common.GlobalConstant.INSUFFICIENT_BALANCE;
 
 public class Account {
@@ -25,6 +23,10 @@ public class Account {
     public BigInteger getBalance() {
         return balance;
     }
+    public String getName() {
+        return name;
+    }
+
     public Boolean isMatchesPin(String pin){
         return this.pin.equals(pin);
     }

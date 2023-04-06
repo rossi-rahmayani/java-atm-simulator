@@ -18,7 +18,8 @@ public class GlobalConstant {
     //option main menu
     public static final String WITHDRAW_OPTION = "1";
     public static final String TRANSFER_FUND_OPTION = "2";
-    public static final String EXIT_OPTION = "3";
+    public static final String MUTATION_INQUIRY = "3";
+    public static final String EXIT_OPTION = "9";
 
     //withdraw option
     public static final String WITHDRAW_TEN = "1";
@@ -35,5 +36,9 @@ public class GlobalConstant {
     public static final String TRANSFER_MENU = "TRANSFER";
     public static final String MAIN_TRANSACTION_MENU = "MAIN";
     public static final String WELCOME = "WELCOME";
+
+    //debit credit code
+    public static final String DEBIT_CODE = "D";
+    public static final String CREDIT_CODE = "C";
 
 }

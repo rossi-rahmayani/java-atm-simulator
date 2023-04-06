@@ -1,6 +1,7 @@
 package com.rossi.javasimulatoratm;
 
 import com.rossi.javasimulatoratm.repository.AccountRepository;
+import com.rossi.javasimulatoratm.repository.TransactionRepository;
 import com.rossi.javasimulatoratm.service.*;
 
 public class Main {
@@ -8,9 +9,13 @@ public class Main {
         SummaryService summaryService = new SummaryService();
         ValidationService validationService = new ValidationService();
         AccountRepository accountRepository = new AccountRepository();
-        TransferService transferService = new TransferService(validationService, accountRepository, summaryService);
-        WithdrawService withdrawService = new WithdrawService(validationService, summaryService);
-        AtmService service = new AtmService(validationService, accountRepository, withdrawService, transferService);
+        TransactionRepository transactionRepository = new TransactionRepository();
+
+        TransferService transferService = new TransferService(validationService, accountRepository, summaryService, transactionRepository);
+        WithdrawService withdrawService = new WithdrawService(validationService, summaryService, transactionRepository);
+        InquiryService inquiryService = new InquiryService(summaryService, transactionRepository);
+
+        AtmService service = new AtmService(validationService, accountRepository, withdrawService, transferService, inquiryService);
         service.welcomeScreen();
     }
 }

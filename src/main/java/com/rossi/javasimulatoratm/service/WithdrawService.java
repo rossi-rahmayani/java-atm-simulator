@@ -1,8 +1,10 @@
 package com.rossi.javasimulatoratm.service;
 
+import com.rossi.javasimulatoratm.common.TransactionCode;
 import com.rossi.javasimulatoratm.common.WithdrawalAmount;
 import com.rossi.javasimulatoratm.exception.ValidationException;
 import com.rossi.javasimulatoratm.model.Account;
+import com.rossi.javasimulatoratm.repository.TransactionRepository;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -15,9 +17,12 @@ import static com.rossi.javasimulatoratm.common.GlobalConstant.*;
 public class WithdrawService {
     private ValidationService validationService;
     private SummaryService summaryService;
-    public WithdrawService(ValidationService validationService, SummaryService summaryService) {
+    private TransactionRepository transactionRepository;
+
+    public WithdrawService(ValidationService validationService, SummaryService summaryService, TransactionRepository transactionRepository){
         this.validationService = validationService;
         this.summaryService = summaryService;
+        this.transactionRepository = transactionRepository;
     }
 
     Scanner input = new Scanner(System.in);
@@ -57,8 +62,12 @@ public class WithdrawService {
 
     private String withdraw(Account account, BigInteger amount) throws ValidationException {
         account.decreaseBalance(amount);
+        //create transaction history
+        LocalDateTime trxDate = LocalDateTime.now();
+        transactionRepository.createNewTransaction(account, TransactionCode.WITHDRAW, amount, trxDate, "");
+
         System.out.println("Summary");
-        System.out.println("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")));
+        System.out.println("Date: " + trxDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")));
         System.out.println("Withdraw: $" + amount);
         System.out.println("Balance: $" + account.getBalance());
         return summaryService.summaryOption();
